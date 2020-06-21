@@ -1,8 +1,8 @@
-import React from "react";
-import "./styles.css";
+import React from 'react';
+import './styles.css';
 
-import WordFetcher from "./service/WordFetcher";
-import CharChain from "./components/CharChain/CharChain";
+import WordFetcher from './service/WordFetcher';
+import CharChain from './components/CharChain/CharChain';
 
 export default function App() {
   const randomWord = WordFetcher.getRandom();

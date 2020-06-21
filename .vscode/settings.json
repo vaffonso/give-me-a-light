@@ -1,8 +1,9 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // These are all my auto-save configs
   "editor.formatOnSave": true,
-  // Enable per-language
-  "[javascript]": {
-    "editor.formatOnSave": true
+  // tell the ESLint plugin to run on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": true
   }
 }

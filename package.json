@@ -1,7 +1,7 @@
 {
   "name": "give-me-a-light",
   "version": "1.0.0",
-  "description": "Word discover. Find out the word by the sequence the ligths turn on",
+  "description": "Word discover. Find out the word by the sequence the lights turn on",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
@@ -12,6 +12,9 @@
     "react-scripts": "3.0.1"
   },
   "devDependencies": {
+    "eslint": "^7.3.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
     "typescript": "3.8.3"
   },
@@ -20,8 +23,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "lint": "prettier --check src/**/*.js",
-    "lint:fix": "prettier --write src/**.js"
+    "lint": "eslint",
+    "lint:fix": "eslint ."
   },
   "browserslist": [
     ">0.2%",

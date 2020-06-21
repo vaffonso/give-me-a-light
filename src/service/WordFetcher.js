@@ -1,4 +1,4 @@
-import wordArchive from "../asset/wordArchive";
+import wordArchive from '../asset/wordArchive';
 
 class WordFetcher {
   constructor(wordList) {
@@ -14,19 +14,19 @@ class WordFetcher {
    * @function getRandomIndex
    * @returns {integer}
    */
-  getRandomIndex = () => {
+  getRandomIndex() {
     return Math.floor(Math.random() * (this.size - 1));
-  };
+  }
 
   /**
    * Get random word
    * @function getRandom
    * @returns {string}
    */
-  getRandom = () => {
+  getRandom() {
     const index = this.getRandomIndex();
     return this.keys[index];
-  };
+  }
 }
 
 export default new WordFetcher(wordArchive);
