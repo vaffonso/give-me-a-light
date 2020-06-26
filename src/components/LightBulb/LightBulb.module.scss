@@ -1,0 +1,68 @@
+$bulb-off-bg-color: #cecece;
+$bulb-base-bg-color: #838080;
+$bulb-on-bg-color: #fcfcbf;
+$bulb-size: 30px;
+
+@mixin box-shadow($offsetX, $offsetY, $blurRadius, $spreadRadius, $color) {
+  -webkit-box-shadow: $offsetX $offsetY $blurRadius $spreadRadius $color;
+  -moz-box-shadow: $offsetX $offsetY $blurRadius $spreadRadius $color;
+  box-shadow: $offsetX $offsetY $blurRadius $spreadRadius $color;
+}
+
+@mixin light-on-box-shadow($color, $opacity) {
+  @include box-shadow(
+    0,
+    0,
+    calc(#{$bulb-size} - 10px),
+    calc(#{$bulb-size} / 3),
+    rgba($color, $opacity)
+  );
+}
+
+.Container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.LightBulb {
+  display: flex;
+  flex-direction: column;
+}
+
+.BulbBase {
+  height: calc(#{$bulb-size} * 0.2);
+  width: calc(#{$bulb-size} - 15px);
+  background-color: $bulb-base-bg-color;
+  border-radius: 20% 20% 0 0;
+  align-self: center;
+  position: absolute;
+  top: -5px;
+}
+
+.BulbCord {
+  // height: random(300) + px;
+  border: 1px solid black;
+  width: 2px;
+  align-self: center;
+}
+
+.Bulb {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: $bulb-size;
+  width: $bulb-size;
+  background-color: $bulb-off-bg-color;
+  border-radius: 100%;
+  box-shadow: none;
+  position: relative;
+
+  &.lightened {
+    background-color: $bulb-on-bg-color;
+    font-weight: bold;
+    color: black;
+    @include light-on-box-shadow(#e6df93, 1);
+  }
+}

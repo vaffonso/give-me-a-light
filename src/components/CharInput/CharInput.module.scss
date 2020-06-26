@@ -1,0 +1,40 @@
+$placeholderColor: lighten(#3498db, 20%);
+$fontsize: 60px; //code
+
+.CharInput {
+  display: flex;
+  flex-direction: column;
+
+  input::-webkit-input-placeholder {
+    color: $placeholderColor !important;
+  }
+
+  input:-moz-placeholder {
+    color: $placeholderColor !important;
+  }
+
+  input::-moz-placeholder  /* Firefox 19+ */ {
+    color: $placeholderColor !important;
+  }
+
+  input:-ms-input-placeholder {
+    color: $placeholderColor !important;
+  }
+
+  input {
+    width: #{$fontsize/(5/4) + 10};
+    height: $fontsize;
+    line-height: 100%;
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    color: white;
+    font-size: $fontsize;
+    word-spacing: 0px;
+    overflow: hidden;
+    text-align: center;
+
+    &:focus {
+    }
+  }
+}

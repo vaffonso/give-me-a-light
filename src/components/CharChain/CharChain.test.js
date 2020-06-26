@@ -25,4 +25,6 @@ describe('CharChain component', () => {
     expect(alert).toBeTruthy();
     expect(alert.textContent).toBe('No word received');
   });
+
+  it('should set focus on the next char input', () => {});
 });
