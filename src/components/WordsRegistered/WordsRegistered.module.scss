@@ -1,0 +1,23 @@
+.Table {
+  margin: 1em auto;
+  th {
+    margin: 0 15px;
+    border-bottom: 2px groove;
+  }
+
+  tbody td {
+    padding: 0.25em 0.5em;
+  }
+
+  .cellExplained {
+    letter-spacing: 0.25em;
+  }
+}
+
+.correctChar {
+  color: greenyellow;
+}
+
+.wrongChar {
+  color: orangered;
+}

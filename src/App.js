@@ -8,9 +8,11 @@ import Lights from './components/Lights/Lights';
 import Controller from './components/Controller/Controller';
 import WordsRegistered from './components/WordsRegistered/WordsRegistered';
 
-import Levels from './utils/Levels';
+// import Levels from './utils/Levels';
 
-const initialLevel = Levels.MEDIUM;
+// const initialGameLevel = Levels.MEDIUM;
+
+// const maxGuesses = 5;
 
 const getAvailableChars = () => {
   const allChars = [];
@@ -25,10 +27,18 @@ const getWord = () => Array.from(WordFetcher.getRandom());
 const alphaChars = getAvailableChars();
 
 export default function App() {
-  const [started, setStarted] = useState(false);
-  const [level, setLevel] = useState(initialLevel);
   const [randomWord] = useState(() => getWord());
+
+  const [started, setStarted] = useState(false);
+
   const [enteredWords, setEnteredWords] = useState([]);
+
+  const [gameLevel, setGameLevel] = useState('');
+
+  const [lights, setLights] = useState({
+    changeSpeed: gameLevel,
+    state: false,
+  });
 
   const wordEnteredHandler = (wordEntered) => {
     const newEnteredWords = [...enteredWords, wordEntered];
@@ -36,43 +46,61 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log(`words entered changing ${enteredWords.length}`);
-  }, [enteredWords]);
+    // console.log(`words entered changing ${enteredWords.length}`);
+    const newLightSpeed = gameLevel + 25 * enteredWords.length;
+    setLights({
+      changeSpeed: newLightSpeed,
+      state: true,
+    });
+  }, [enteredWords, gameLevel]);
+
+  useEffect(() => {
+    if (started) {
+      setLights((prevState) => ({ ...prevState, state: true }));
+    }
+  }, [started]);
 
   return (
     <div className="App">
       <h1>Give me a light!</h1>
       <h2>Guess the word based on sequence the letters light up.</h2>
-      <div style={{ textAlign: 'left' }}>
+      <div hidden={true} style={{ textAlign: 'left' }}>
         <h3>App state</h3>
         <ul>
           <li>Started: {started.toString()}</li>
-          <li>Level: {level}</li>
+          <li>Game level: {gameLevel}</li>
           <li>Secret word: {randomWord.join('')}</li>
           <li>Guesses: {enteredWords.length}</li>
+          <li>Lights: {JSON.stringify(lights)}</li>
         </ul>
       </div>
+
+      <Controller
+        started={started}
+        selectedLevel={gameLevel}
+        onStart={() => setStarted(true)}
+        onLevelChange={(level) => {
+          setGameLevel(Number(level));
+        }}
+      />
 
       <Lights
         wordArray={randomWord}
         availableChars={alphaChars}
-        started={started}
-        changeSpeed={level}
-      />
-
-      <Controller
-        started={started}
-        selectedLevel={level}
-        onStart={() => setStarted(true)}
-        onLevelChange={(level) => setLevel(level)}
+        start={started && lights.state}
+        onComplete={() =>
+          setLights((prevState) => ({ ...prevState, state: false }))
+        }
+        changeSpeed={lights.changeSpeed}
       />
 
       {/* <h4 className="secretWord">{randomWord && randomWord.join('')}</h4> */}
       <CharChain
         wordArray={randomWord}
         onEntered={(word) => wordEnteredHandler(word)}
+        enableInput={started && !lights.state}
       />
-      <WordsRegistered words={enteredWords} />
+      <WordsRegistered words={enteredWords} secretWord={randomWord} />
     </div>
   );
 }

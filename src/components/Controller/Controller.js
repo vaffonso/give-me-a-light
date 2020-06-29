@@ -6,20 +6,30 @@ import Levels from '../../utils/Levels';
 
 const Controller = ({ started, onStart, selectedLevel, onLevelChange }) => {
   const levelOptions = Object.entries(Levels).map(([id, value]) => (
-    <option key={id} value={value} selected={selectedLevel === value}>
+    <option key={id} value={value}>
       {id}
     </option>
   ));
 
+  levelOptions.unshift(
+    <option key="-1" value="">
+      Select game level
+    </option>
+  );
+
   return (
     <div className={styles.Controller}>
-      {/* <select
+      <select
+        value={selectedLevel}
         disabled={started}
         onChange={(ev) => onLevelChange(ev.target.value)}
       >
         {levelOptions}
-      </select> */}
-      <button disabled={started} onClick={() => onStart(!started)}>
+      </select>
+      <button
+        disabled={started || !selectedLevel}
+        onClick={() => onStart(!started)}
+      >
         Start
       </button>
     </div>

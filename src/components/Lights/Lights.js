@@ -32,10 +32,15 @@ const shuffle = (availableChars) => {
   return shuffledArray;
 };
 
-const Lights = ({ availableChars, wordArray, changeSpeed, started }) => {
+const Lights = ({
+  availableChars,
+  wordArray,
+  changeSpeed,
+  start,
+  onComplete,
+}) => {
   const [currentLight, setCurrentLight] = useState(0);
   const [lightsProps, setLightsProps] = useState([]);
-  const [lights, setLights] = useState([]);
 
   useEffect(() => {
     const shuffled = shuffle(availableChars);
@@ -49,24 +54,27 @@ const Lights = ({ availableChars, wordArray, changeSpeed, started }) => {
 
   useEffect(() => {
     let interval = null;
-    if (!lightsProps.length) {
-      return;
-    }
-    const currLetter = wordArray[currentLight];
 
-    const lights = lightsProps.map((props) => (
-      <LightBulb {...props} lightenUp={started && currLetter === props.char} />
-    ));
-
-    if (started && currentLight < wordArray.length) {
-      interval = setInterval(() => {
-        setCurrentLight((currentLight) => currentLight + 1);
-      }, changeSpeed);
+    if (start) {
+      if (currentLight < wordArray.length) {
+        interval = setInterval(() => {
+          setCurrentLight((currentLight) => currentLight + 1);
+        }, changeSpeed);
+      } else {
+        setCurrentLight(0);
+        onComplete();
+      }
     }
 
-    setLights(lights);
     return () => clearInterval(interval);
-  }, [currentLight, started, lightsProps, changeSpeed, wordArray]);
+  }, [currentLight, start, changeSpeed, wordArray, onComplete]);
+
+  const lights = lightsProps.map((props) => (
+    <LightBulb
+      {...props}
+      lightenUp={start && wordArray[currentLight] === props.char}
+    />
+  ));
 
   const content = <div className={styles.Lights}>{lights}</div>;
   const alert = <p>Available chars don't match word chars.</p>;

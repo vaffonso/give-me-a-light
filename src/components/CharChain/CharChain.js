@@ -1,89 +1,141 @@
-import React, { useRef, useEffect, createRef } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  createRef,
+  useCallback,
+} from 'react';
 import CharInput from '../CharInput/CharInput';
 import styles from './CharChain.module.scss';
 
+import { sameWord } from '../../utils/wordUtils';
+
 import PropTypes from 'prop-types';
 
-const CharChain = ({ wordArray, onEntered }) => {
+const resetInitialWord = (wordLength) => {
+  return Array(wordLength).fill('');
+};
+
+const isFilled = (val) => {
+  if (!val) {
+    return false;
+  }
+  if (!val.trim()) {
+    return false;
+  }
+  return true;
+};
+
+const nextRoundInterval = 750;
+
+const Result = ({ isCorrect }) => {
+  const ariaLabel = !isCorrect ? `Wrong` : `Correct`;
+  const label = !isCorrect ? `❌` : `✅`;
+  return (
+    <span role="img" aria-label={ariaLabel} className={styles.result}>
+      {label}
+    </span>
+  );
+};
+
+const CharChain = ({ wordArray, onEntered, enableInput }) => {
   const refsArray = useRef([]);
+  const [formedWord, setFormedWord] = useState(
+    resetInitialWord(wordArray.length)
+  );
 
-  const previousHandler = (index) => {
-    const previous = index - 1;
-    if (previous >= 0) {
-      const input = refsArray.current[previous];
-      input.current.focus();
-    }
+  const backSpaceHandler = (index) => {
+    const previous = index - 1 < 0 ? 0 : index - 1;
+    charEntered(previous, '');
   };
 
-  const nextHandler = (index) => {
-    const next = index + 1;
-    if (refsArray.current.length > next) {
-      const input = refsArray.current[next];
-      input.current.focus();
+  const charEntered = (index, char) => {
+    const newFormedWord = [...formedWord];
+    newFormedWord[index] = char;
+    setFormedWord(newFormedWord);
+  };
+
+  const setCharFocus = (index) => {
+    const input = refsArray.current[index];
+    input.current.focus();
+  };
+
+  /**
+   * Set focus on the next non-filled input
+   */
+  const setFocus = useCallback((formedWord) => {
+    let index;
+    for (let i = 0; i < formedWord.length; i += 1) {
+      if (!isFilled(formedWord[i])) {
+        index = i;
+        break;
+      }
+    }
+    setCharFocus(index);
+  }, []);
+
+  useEffect(() => {
+    let interval = null;
+    const allFilled = formedWord.every(isFilled);
+    if (allFilled) {
+      interval = setInterval(() => {
+        setFormedWord(resetInitialWord(wordArray.length));
+        onEntered(formedWord);
+      }, nextRoundInterval);
     } else {
-      const word = collectChars(refsArray.current);
-      console.log(`collect word ${word}`);
-      clearInputs(refsArray.current);
-      onEntered(word.toUpperCase());
+      setFocus(formedWord);
     }
-  };
 
-  useEffect(() => {
-    console.log(`onEntered changed`);
-  }, [onEntered]);
+    return () => clearInterval(interval);
+  }, [formedWord, onEntered, setFocus, wordArray]);
 
-  useEffect(() => {
-    console.log(`wordArray changed`);
-  }, [wordArray]);
-
-  const collectChars = (refs) => {
-    const letters = refs.map((ref) => ref.current.value);
-    return letters.join('');
-  };
-
-  const clearInputs = (refs) => {
-    refs.forEach((ref) => {
-      ref.current.value = '';
-    });
-  };
-
+  /**
+   *
+   */
   if (refsArray.current.length !== wordArray.length) {
     refsArray.current = Array(wordArray.length)
       .fill()
       .map((_, i) => refsArray.current[i] || createRef());
   }
 
-  const inputs = wordArray.map((char, index) => (
+  const charEntry = formedWord.map((char, index) => (
     <CharInput
       key={index}
       char={char}
+      charCheck={wordArray[index]}
       ref={refsArray.current[index]}
-      next={() => nextHandler(index)}
-      previous={() => previousHandler(index)}
+      disabled={!enableInput}
+      charUpdate={(char) => charEntered(index, char)}
+      backSpace={() => backSpaceHandler(index)}
     />
   ));
 
-  const alert = !wordArray.length ? <p role="alert">No word received</p> : null;
+  const inputs = (
+    <React.Fragment>
+      {charEntry}
+      {!formedWord.every(isFilled) ? null : (
+        <Result isCorrect={sameWord(wordArray, formedWord)} />
+      )}
+    </React.Fragment>
+  );
 
-  useEffect(() => {
-    console.log(`effect char chain`);
-
-    if (refsArray.current.length) {
-      refsArray.current[0].current.focus();
-    }
-  }, [wordArray]);
+  const content = wordArray.length ? (
+    inputs
+  ) : (
+    <p role="alert">No word received</p>
+  );
 
   return (
     <div role="group" className={styles.CharChain}>
-      {inputs}
-      {alert}
+      {content}
     </div>
   );
 };
 
 CharChain.propTypes = {
-  wordArray: PropTypes.array,
+  enableInput: PropTypes.any,
   onEntered: PropTypes.func,
+  wordArray: PropTypes.array,
 };
 
 export default CharChain;
