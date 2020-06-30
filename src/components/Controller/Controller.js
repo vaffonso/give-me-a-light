@@ -2,10 +2,10 @@ import React from 'react';
 
 import styles from './Controller.module.scss';
 
-import Levels from '../../utils/Levels';
+import { LEVELS } from '../../utils/Game';
 
 const Controller = ({ started, onStart, selectedLevel, onLevelChange }) => {
-  const levelOptions = Object.entries(Levels).map(([id, value]) => (
+  const levelOptions = Object.entries(LEVELS).map(([id, value]) => (
     <option key={id} value={value}>
       {id}
     </option>
