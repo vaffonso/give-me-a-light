@@ -6,3 +6,11 @@ export const STATUS = Object.freeze({
 });
 
 export const LEVELS = Object.freeze({ EASY: 500, MEDIUM: 300, HARD: 200 });
+
+export const initialGameState = {
+  status: STATUS.INITIAL,
+  level: '',
+  enteredWords: [],
+  word: null,
+  maxGuesses: 5,
+};

@@ -5,21 +5,7 @@ import PropTypes from 'prop-types';
 import styles from './Lights.module.scss';
 import LightBulb from '../LightBulb/LightBulb';
 
-/**
- * Confirms match of chars to be displayed with word chars
- * @function
- * @param {*} availableChars - Array of chars to be displayed
- * @param {*} wordChars - Array of chars in the word
- * @returns {boolean}
- */
-const checkMatchingChars = (availableChars, wordChars) => {
-  for (let char of wordChars) {
-    if (!availableChars.includes(char)) {
-      return false;
-    }
-  }
-  return true;
-};
+import { checkMatchingChars } from '../../utils/wordUtils';
 
 const shuffle = (availableChars) => {
   const shuffledArray = [...availableChars];

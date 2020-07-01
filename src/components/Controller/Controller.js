@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import styles from './Controller.module.scss';
@@ -34,6 +35,17 @@ const Controller = ({ started, onStart, selectedLevel, onLevelChange }) => {
       </button>
     </div>
   );
+};
+
+Controller.propTypes = {
+  onLevelChange: PropTypes.func,
+  onStart: PropTypes.func,
+  selectedLevel: PropTypes.any,
+  started: PropTypes.any,
+};
+
+Controller.defaultProps = {
+  loadWord: () => {},
 };
 
 export default Controller;

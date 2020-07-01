@@ -12,8 +12,8 @@ import { sameWord } from '../../utils/wordUtils';
 
 import PropTypes from 'prop-types';
 
-const resetInitialWord = (wordLength) => {
-  return Array(wordLength).fill('');
+const resetInitialWord = (word) => {
+  return word && Array.isArray(word) ? Array(word.length).fill('') : [];
 };
 
 const isFilled = (val) => {
@@ -40,9 +40,7 @@ const Result = ({ isCorrect }) => {
 
 const CharChain = ({ wordArray, onEntered, enableInput }) => {
   const refsArray = useRef([]);
-  const [formedWord, setFormedWord] = useState(
-    resetInitialWord(wordArray.length)
-  );
+  const [formedWord, setFormedWord] = useState(resetInitialWord(wordArray));
 
   const backSpaceHandler = (index) => {
     const previous = index - 1 < 0 ? 0 : index - 1;
@@ -76,10 +74,11 @@ const CharChain = ({ wordArray, onEntered, enableInput }) => {
 
   useEffect(() => {
     let interval = null;
+
     const allFilled = formedWord.every(isFilled);
     if (allFilled) {
       interval = setInterval(() => {
-        setFormedWord(resetInitialWord(wordArray.length));
+        setFormedWord(resetInitialWord(wordArray));
         onEntered(formedWord);
       }, nextRoundInterval);
     } else {
@@ -92,7 +91,7 @@ const CharChain = ({ wordArray, onEntered, enableInput }) => {
   /**
    *
    */
-  if (refsArray.current.length !== wordArray.length) {
+  if (wordArray && refsArray.current.length !== wordArray.length) {
     refsArray.current = Array(wordArray.length)
       .fill()
       .map((_, i) => refsArray.current[i] || createRef());
@@ -135,7 +134,7 @@ const CharChain = ({ wordArray, onEntered, enableInput }) => {
 CharChain.propTypes = {
   enableInput: PropTypes.any,
   onEntered: PropTypes.func,
-  wordArray: PropTypes.array,
+  wordArray: PropTypes.array.isRequired,
 };
 
 export default CharChain;

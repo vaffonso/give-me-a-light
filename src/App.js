@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 // import 'normalize.css';
 import './styles.scss';
 
@@ -8,13 +8,13 @@ import Lights from './components/Lights/Lights';
 import Controller from './components/Controller/Controller';
 import WordsRegistered from './components/WordsRegistered/WordsRegistered';
 
-import { sameWord } from './utils/wordUtils';
-import { STATUS } from './utils/Game';
+import { STATUS, initialGameState } from './utils/Game';
 import StatusMessage from './components/StatusMessage/StatusMessage';
+import * as gameActions from './reducers/gameActions';
+import gameReducer from './reducers/game';
+import { useCallback } from 'react';
 
 // const initialGameLevel = LEVELS.MEDIUM;
-
-const maxGuesses = 5;
 
 const getAvailableChars = () => {
   const allChars = [];
@@ -29,56 +29,76 @@ const getWord = () => Array.from(WordFetcher.getRandom());
 const alphaChars = getAvailableChars();
 
 export default function App() {
-  const [randomWord] = useState(() => getWord());
-  const [game, setGame] = useState({
-    status: STATUS.INITIAL,
-    level: '',
-    enteredWords: [],
-  });
+  const [game, dispatch] = useReducer(gameReducer, initialGameState);
   const [lights, setLights] = useState({
     changeSpeed: game.level,
     state: false,
   });
 
-  const wordEnteredHandler = (wordEntered) => {
-    const newEnteredWords = [...game.enteredWords, wordEntered];
-    if (sameWord(wordEntered, randomWord)) {
-      setGame((prevGameState) => ({
-        ...prevGameState,
-        status: STATUS.COMPLETE,
-        enteredWords: newEnteredWords,
-      }));
-    } else if (newEnteredWords.length >= maxGuesses) {
-      setGame((prevGameState) => ({
-        ...prevGameState,
-        status: STATUS.GAME_OVER,
-        enteredWords: newEnteredWords,
-      }));
-    } else {
-      setGame((prevGameState) => ({
-        ...prevGameState,
-        enteredWords: newEnteredWords,
-      }));
-    }
+  const startHandler = async () => {
+    const newWord = await getWord();
+    console.log(`new word is ${newWord}`);
+    dispatch({ type: gameActions.START, payload: newWord });
   };
 
+  const levelHandler = (level) => {
+    dispatch({ type: gameActions.LEVEL_UPDATE, payload: Number(level) });
+  };
+
+  const wordEnteredHandler = (wordEntered) => {
+    dispatch({ type: gameActions.NEW_GUESS, payload: wordEntered });
+  };
+
+  const logLightsChanges = useCallback(() => {
+    console.log(`
+    Lights state changed
+    Lights: ${JSON.stringify(lights)} 
+    `);
+  }, [lights]);
+
+  const logGameChanges = useCallback(() => {
+    console.log(`
+    Games state changed
+    Game: ${JSON.stringify(game)}
+  `);
+  }, [game]);
+
   useEffect(() => {
-    // console.log(`words entered changing ${enteredWords.length}`);
+    logLightsChanges();
+  }, [lights, logLightsChanges]);
+
+  useEffect(() => {
+    logGameChanges();
+
     const newLightSpeed = game.level + 25 * game.enteredWords.length;
     setLights({
       changeSpeed: newLightSpeed,
-      state: true,
+      state: game.status === STATUS.STARTED,
     });
-  }, [game]);
+  }, [game, logGameChanges]);
 
-  console.log(`
-    App State
-    Game: ${JSON.stringify(game)}
-    Secret word: ${randomWord.join('')}
-    Guesses: ${game.enteredWords.length}
-    Lights: ${JSON.stringify(lights)} 
-  `);
+  const lightsContent = game.word ? (
+    <Lights
+      wordArray={game.word}
+      availableChars={alphaChars}
+      start={game.status === STATUS.STARTED && lights.state}
+      onComplete={() =>
+        setLights((prevState) => ({ ...prevState, state: false }))
+      }
+      changeSpeed={lights.changeSpeed}
+    />
+  ) : null;
 
+  const inputContent = game.word ? (
+    <React.Fragment>
+      <CharChain
+        wordArray={game.word}
+        onEntered={(word) => wordEnteredHandler(word)}
+        enableInput={game.status === STATUS.STARTED && !lights.state}
+      />
+      <WordsRegistered words={game.enteredWords} secretWord={game.word} />
+    </React.Fragment>
+  ) : null;
   return (
     <div className="App">
       <h1>Give me a light!</h1>
@@ -87,38 +107,15 @@ export default function App() {
       <Controller
         started={game.status === STATUS.STARTED}
         selectedLevel={game.level}
-        onStart={() =>
-          setGame((prevGameState) => ({
-            ...prevGameState,
-            status: STATUS.STARTED,
-          }))
-        }
-        onLevelChange={(level) => {
-          setGame((prevGameState) => ({
-            ...prevGameState,
-            level: Number(level),
-          }));
-        }}
+        word={game.word}
+        onStart={() => startHandler()}
+        onLevelChange={(level) => levelHandler(level)}
       />
 
-      <Lights
-        wordArray={randomWord}
-        availableChars={alphaChars}
-        start={game.status === STATUS.STARTED && lights.state}
-        onComplete={() =>
-          setLights((prevState) => ({ ...prevState, state: false }))
-        }
-        changeSpeed={lights.changeSpeed}
-      />
+      <StatusMessage status={game.status} word={game.word} />
 
-      {/* <h4 className="secretWord">{randomWord && randomWord.join('')}</h4> */}
-      <CharChain
-        wordArray={randomWord}
-        onEntered={(word) => wordEnteredHandler(word)}
-        enableInput={game.status === STATUS.STARTED && !lights.state}
-      />
-      <StatusMessage status={game.status} word={randomWord} />
-      <WordsRegistered words={game.enteredWords} secretWord={randomWord} />
+      {lightsContent}
+      {inputContent}
     </div>
   );
 }
