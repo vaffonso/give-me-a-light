@@ -7,3 +7,4 @@ Game to discover the word based on the sequence that each letter lights up.
 - To replace wordFetcher by some API. Some [available APIs]<https://github.com/public-apis/public-apis#dictionaries>
   - For now using mocked words
 - Good topic to put in practice [inversion of control](https://kentcdodds.com/blog/inversion-of-control)
+- Hard to identify repeated letter

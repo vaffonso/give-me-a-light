@@ -6,5 +6,9 @@
     "source.fixAll": true,
     "source.fixAll.eslint": true
   },
-  "cSpell.words": ["browserslist", "textbox"]
+  "cSpell.words": [
+    "browserslist",
+    "textbox"
+  ],
+  "jira-plugin.workingProject": ""
 }

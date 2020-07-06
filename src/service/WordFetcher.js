@@ -3,6 +3,7 @@ import wordArchive from '../asset/wordArchive';
 class WordFetcher {
   constructor(wordList) {
     this.keys = Object.keys(wordList);
+    this.wordList = wordList;
   }
 
   get size() {
@@ -15,7 +16,8 @@ class WordFetcher {
    * @returns {integer}
    */
   getRandomIndex() {
-    return Math.floor(Math.random() * (this.size - 1));
+    const index = Math.floor(Math.random() * this.size);
+    return index;
   }
 
   /**
@@ -25,7 +27,22 @@ class WordFetcher {
    */
   getRandom() {
     const index = this.getRandomIndex();
-    return this.keys[index];
+    const word = this.keys[index];
+    return word;
+  }
+
+  /**
+   * Provide details about word
+   * @function getDetails
+   * @param {string} word
+   * @returns {object | null}
+   */
+  getDetails(word) {
+    console.log(`word requested: ${word}`);
+    const wordDetail = this.wordList[word];
+    console.log(wordDetail);
+
+    return wordDetail;
   }
 }
 

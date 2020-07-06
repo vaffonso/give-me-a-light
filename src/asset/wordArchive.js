@@ -23,6 +23,18 @@ const wordArchive = {
     definition:
       'an instrument with a sharp blade or set of blades, used to remove unwanted hair from the face or body.',
   },
+  scabbard: {
+    type: 'noun',
+    definition: `a sheath for the blade of a sword or dagger, typically made of leather or metal.`,
+  },
+  helmsman: {
+    type: 'noun',
+    definition: 'a person who steers a ship or boat.',
+  },
+  arrowroot: {
+    type: 'noun',
+    definition: 'a herbaceous Caribbean plant from which a starch is prepared.',
+  },
 };
 
 export default wordArchive;
