@@ -13,6 +13,7 @@ import StatusMessage from './components/StatusMessage/StatusMessage';
 import * as gameActions from './reducers/gameActions';
 import gameReducer from './reducers/game';
 import { useCallback } from 'react';
+import { owlbot } from './credentials';
 
 // const initialGameLevel = LEVELS.MEDIUM;
 
@@ -34,6 +35,32 @@ export default function App() {
     changeSpeed: game.level,
     state: false,
   });
+
+  const fetchWordAPI = async () => {
+    var myHeaders = new Headers({
+      Authorization: `Token ${owlbot.token}`,
+    });
+
+    var myInit = {
+      method: 'GET',
+      headers: myHeaders,
+      mode: 'no-cors',
+      cache: 'default',
+    };
+
+    var myRequest = new Request('https://owlbot.info', myInit);
+
+    fetch(myRequest)
+      .then(function (response) {
+        return response.blob();
+      })
+      .then(function (myBlob) {
+        console.log(myBlob);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const startHandler = async () => {
     const newWord = await getWord();
@@ -103,6 +130,8 @@ export default function App() {
     <div className="App">
       <h1>Give me a light!</h1>
       <h3>Guess the word based on sequence the letters light up.</h3>
+
+      {/* <button onClick={fetchWordAPI}>Get word</button> */}
 
       <Controller
         started={game.status === STATUS.STARTED}
