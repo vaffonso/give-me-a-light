@@ -1,12 +1,13 @@
 import React from 'react';
 
+import PropTypes from 'prop-types';
+
 import styles from './LightBulb.module.scss';
 
 /**
  * Light bulb design
  * Credits to https://codepen.io/networkedevolution/pen/yZqRrR
  * Inspired by https://codepen.io/twogrey/pen/Wbzbox
- * @param {*} param0
  */
 const LightBulb = ({ char, lightenUp, height }) => {
   if (!char) {
@@ -33,6 +34,26 @@ const LightBulb = ({ char, lightenUp, height }) => {
   );
 
   return container;
+};
+
+LightBulb.propTypes = {
+  /**
+   * Char to be printed in the bulb.
+   */
+  char: PropTypes.string,
+  /**
+   * Indicator whether light is ON or OFF.
+   */
+  lightenUp: PropTypes.bool,
+  /**
+   * Distance from the ceiling.
+   */
+  height: PropTypes.number,
+};
+
+LightBulb.defaultProps = {
+  lightenUp: false,
+  height: 60,
 };
 
 export default LightBulb;
