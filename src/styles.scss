@@ -20,7 +20,7 @@ body {
   background-attachment: fixed;
   padding: 10px;
   color: $color;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -30,7 +30,6 @@ body {
 }
 
 .App {
-  font-family: sans-serif;
   text-align: center;
   display: flex;
   flex-direction: column;

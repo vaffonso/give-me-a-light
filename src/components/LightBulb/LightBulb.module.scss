@@ -28,6 +28,7 @@ $bulb-size: 30px;
 .LightBulb {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .BulbBase {
